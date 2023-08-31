@@ -1,0 +1,5 @@
+
+j
+java:S2095*"OUse try-with-resources or close this "GLFWErrorCallback" in a "finally" clause.(àâç”ûÿÿÿÿ
+N	java:S106 "9Replace this use of System.out or System.err by a logger.(±ëí¿
+S	java:S106*"9Replace this use of System.out or System.err by a logger.(àâç”ûÿÿÿÿ

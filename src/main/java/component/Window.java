@@ -8,13 +8,18 @@ import org.lwjgl.glfw.GLFWErrorCallbackI;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
 public class Window {
     int width = 800;
     int height = 640;
     String title = "Teste";
     private long glfwWindow;
     private static Window window = null;
-    private Triangle triangle;
+    private final Triangle triangle;
 
     private Window(Triangle triangle) {
         this.triangle = triangle;
@@ -29,7 +34,7 @@ public class Window {
     }
 
     public void run() {
-        System.out.println("Hello, LWJGL");
+        System.out.println("Init GLFW");
         this.init();
         this.loop();
         Callbacks.glfwFreeCallbacks(this.glfwWindow);
@@ -44,15 +49,19 @@ public class Window {
             throw new IllegalStateException("unable to initialize GLFW");
         } else {
             GLFW.glfwDefaultWindowHints();
-            GLFW.glfwWindowHint(131076, 0);
-            GLFW.glfwWindowHint(131075, 1);
-            GLFW.glfwWindowHint(131080, 1);
-            this.glfwWindow = GLFW.glfwCreateWindow(this.width, this.height, this.title, 0L, 0L);
-            if (Objects.isNull(this.glfwWindow)) {
+            GLFW.glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+            GLFW.glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+            GLFW.glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+            this.glfwWindow = GLFW.glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
+            if (this.glfwWindow == NULL) {
                 throw new IllegalStateException("Failed to create the glfw window");
             } else {
+//                make the context current
                 GLFW.glfwMakeContextCurrent(this.glfwWindow);
+//                enable v-sync
                 GLFW.glfwSwapInterval(1);
+
+//                show the window
                 GLFW.glfwShowWindow(this.glfwWindow);
                 GL.createCapabilities();
             }
@@ -63,11 +72,19 @@ public class Window {
         while(!GLFW.glfwWindowShouldClose(this.glfwWindow)) {
             GLFW.glfwPollEvents();
             GL11.glClearColor(0.1F, 0.1F, 0.1F, 1.0F);
-            GL11.glClear(16384);
-            GL11.glBegin(4);
+            GL11.glClear(GL_COLOR_BUFFER_BIT);
+
+            GL11.glBegin(GL_TRIANGLES);
+
+            GL11.glColor3f(1.0F, 0.0F, 0.0F);
             GL11.glVertex2f(this.triangle.getPointA().getX(), this.triangle.getPointA().getY());
+
+            GL11.glColor3f(0.0F, 1.0F, 0.0F);
             GL11.glVertex2f(this.triangle.getPointB().getX(), this.triangle.getPointB().getY());
+
+            GL11.glColor3f(0.0F, 0.0F, 1.0F);
             GL11.glVertex2f(this.triangle.getPointC().getX(), this.triangle.getPointC().getY());
+
             GL11.glEnd();
             GLFW.glfwSwapBuffers(this.glfwWindow);
         }
